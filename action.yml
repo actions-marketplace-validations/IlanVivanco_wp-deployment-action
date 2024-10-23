@@ -1,0 +1,54 @@
+name: "WordPress Deployment Action"
+description: "Set up automatic deployments using an SSH private key and the rsync command. Supports Pressable and WP Engine."
+branding:
+  icon: "upload-cloud"
+  color: "red"
+
+inputs:
+  SERVER_TYPE:
+    description: "The type of server to deploy to. So far, only Pressable and WP Engine are supported."
+    required: true
+  SSH_PRIVATE_KEY:
+    description: "The private SSH key. You must save this in the GitHub Secrets and authorize it on Pressable or WP Engine."
+    required: true
+  SERVER_ID:
+    description: "The SSH username for Pressable deployments or the install name for WP Engine deployments."
+    required: true
+  REMOTE_PATH:
+    description: "The remote path on the server where files should be deployed. Defaults to the site root directory."
+    default: ""
+    required: false
+  SRC_PATH:
+    description: "Local path to the source files to deploy. Defaults to the repository root."
+    default: "."
+    required: false
+  FLAGS:
+    description: "Rsync flags to control the behavior of file synchronization."
+    default: "-azvri --inplace --exclude='.*'"
+    required: false
+  PHP_LINT:
+    description: "Set to 'TRUE' to enable PHP linting before deployment. Defaults to 'FALSE'."
+    default: "FALSE"
+    required: false
+  CACHE_CLEAR:
+    description: "Set to 'TRUE' to clear cache after deployment. Defaults to 'FALSE'."
+    default: "FALSE"
+    required: false
+  SCRIPT:
+    description: "Custom script to run on the remote server after deployment."
+    default: ""
+    required: false
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  env:
+    SERVER_TYPE: ${{ inputs.SERVER_TYPE }}
+    SSH_PRIVATE_KEY: ${{ inputs.SSH_PRIVATE_KEY }}
+    SERVER_ID: ${{ inputs.SERVER_ID }}
+    REMOTE_PATH: ${{ inputs.REMOTE_PATH }}
+    SRC_PATH: ${{ inputs.SRC_PATH }}
+    FLAGS: ${{ inputs.FLAGS }}
+    PHP_LINT: ${{ inputs.PHP_LINT }}
+    CACHE_CLEAR: ${{ inputs.CACHE_CLEAR }}
+    SCRIPT: ${{ inputs.SCRIPT }}
