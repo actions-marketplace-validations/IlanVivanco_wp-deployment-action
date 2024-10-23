@@ -6,7 +6,7 @@ branding:
 
 inputs:
   SERVER_TYPE:
-    description: "The type of server to deploy to. So far, only Pressable and WP Engine are supported."
+    description: "The type of server to deploy to. So far, only Pressable ('preesable') and WP Engine ('wpengine') are supported"
     required: true
   SSH_PRIVATE_KEY:
     description: "The private SSH key. You must save this in the GitHub Secrets and authorize it on Pressable or WP Engine."
