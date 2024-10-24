@@ -24,7 +24,7 @@ inputs:
     required: false
   FLAGS:
     description: "Rsync flags to control the behavior of file synchronization."
-    default: "-azvri --inplace --exclude='.*'"
+    default: "-azvrhi --inplace --exclude='.*'"
     required: false
   PHP_LINT:
     description: "Set to 'TRUE' to enable PHP linting before deployment. Defaults to 'FALSE'."

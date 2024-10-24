@@ -8,7 +8,7 @@ validate() {
 	: ${SERVER_ID:?"SERVER_ID variable missing from environment variables."}
 	REMOTE_PATH="${REMOTE_PATH:-""}"
 	SRC_PATH="${SRC_PATH:-"."}"
-	FLAGS="${FLAGS:-"-azvri --inplace --exclude='.*'"}"
+	FLAGS="${FLAGS:-"-azvrhi --inplace --exclude='.*'"}"
 	PHP_LINT="${PHP_LINT:-"FALSE"}"
 	CACHE_CLEAR="${CACHE_CLEAR:-"FALSE"}"
 	SCRIPT="${SCRIPT:-""}"
