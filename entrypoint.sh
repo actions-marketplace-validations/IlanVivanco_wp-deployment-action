@@ -3,20 +3,20 @@ set -e
 
 # Validate the required environment variables
 validate() {
-	: ${SERVER_TYPE^^:?"SERVER_TYPE variable missing from environment variables."}
+	: ${SERVER_TYPE:?"SERVER_TYPE variable missing from environment variables."}
 	: ${SSH_PRIVATE_KEY:?"SSH_PRIVATE_KEY variable missing from environment variables."}
 	: ${SERVER_ID:?"SERVER_ID variable missing from environment variables."}
 	REMOTE_PATH="${REMOTE_PATH:-""}"
 	SRC_PATH="${SRC_PATH:-"."}"
 	FLAGS="${FLAGS:-"-azvrhi --inplace --exclude='.*'"}"
-	PHP_LINT="${PHP_LINT^^:-"FALSE"}"
-	CACHE_CLEAR="${CACHE_CLEAR^^:-"FALSE"}"
+	PHP_LINT="${PHP_LINT:-"false"}"
+	CACHE_CLEAR="${CACHE_CLEAR:-"false"}"
 	SCRIPT="${SCRIPT:-""}"
 }
 
 # Set up environment variables
-setup_env() {
-	case "${SERVER_TYPE}" in
+init() {
+	case "${SERVER_TYPE^^}" in
 	PRESSABLE)
 		SSH_HOST="ssh.pressable.com"
 		SERVER_BASE_PATH="~/htdocs"
@@ -32,8 +32,12 @@ setup_env() {
 	esac
 	SSH_USER="${SERVER_ID}@${SSH_HOST}"
 	SERVER_DEST="${SSH_USER}:${SERVER_BASE_PATH}/${REMOTE_PATH}"
+
 	parse_flags "$FLAGS"
+
 	print_info
+	setup_ssh
+	check_lint
 }
 
 # Print deployment info
@@ -77,7 +81,7 @@ setup_ssh() {
 
 # Check PHP linting
 check_lint() {
-	if [ "${PHP_LINT}" == "TRUE" ]; then
+	if [ "${PHP_LINT^^}" == "TRUE" ]; then
 		echo "Starting PHP linting..."
 		find "${SRC_PATH}" -name "*.php" -type f -print0 | while IFS= read -r -d '' file; do
 			php -l "$file"
@@ -112,7 +116,7 @@ sync_files() {
 	check_cache
 
 	# Execute post-deploy script
-	ssh ${SSH_SETTINGS} "${SSH_USER}" "${SCRIPT_COMMAND} ${CACHE_CLEAR}"
+	ssh ${SSH_SETTINGS} "${SSH_USER}" "${SCRIPT_COMMAND} ${CACHE_COMMAND}"
 
 	# Close SSH multiplex connection
 	ssh -O exit -o ControlPath="${SSH_PATH}/ctl/%C" "${SSH_USER}"
@@ -136,7 +140,7 @@ check_script() {
 
 # Check cache clearing command
 check_cache() {
-	if [ "${CACHE_CLEAR}" == "TRUE" ]; then
+	if [ "${CACHE_CLEAR^^}" == "TRUE" ]; then
 		if [ "${SERVER_TYPE^^}" == "PRESSABLE" ]; then
 			CACHE_COMMAND="&& wp --skip-plugins --skip-themes cache flush"
 		elif [ "${SERVER_TYPE^^}" == "WPENGINE" ]; then
@@ -146,14 +150,12 @@ check_cache() {
 		fi
 
 		echo "Cache command: " ${CACHE_COMMAND}
-	elif [ "${CACHE_CLEAR}" == "FALSE" ]; then
+	else
 		CACHE_COMMAND=""
 	fi
 }
 
 # Main execution
 validate
-setup_env
-setup_ssh
-check_lint
+init
 sync_files
