@@ -40,7 +40,7 @@ You can enable cache purging with the `CACHE_CLEAR` flag and perform PHP syntax 
            uses: actions/checkout@v4
 
          - name: 🔁 Starting Deployment
-           uses: IlanVivanco/wp-deployment-action@main
+           uses: IlanVivanco/wp-deployment-action@v1
            with:
                SSH_PRIVATE_KEY: ${{ secrets.MY_SSH_KEY }}
                SERVER_ID: ${{ env.SERVER_ID }}
