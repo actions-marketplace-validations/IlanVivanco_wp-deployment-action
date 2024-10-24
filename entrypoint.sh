@@ -3,7 +3,7 @@ set -e
 
 # Validate the required environment variables
 validate() {
-	: ${SERVER_TYPE:?"SERVER_TYPE variable missing from environment variables."}
+	: ${SERVER_TYPE^^:?"SERVER_TYPE variable missing from environment variables."}
 	: ${SSH_PRIVATE_KEY:?"SSH_PRIVATE_KEY variable missing from environment variables."}
 	: ${SERVER_ID:?"SERVER_ID variable missing from environment variables."}
 	REMOTE_PATH="${REMOTE_PATH:-""}"
@@ -16,7 +16,7 @@ validate() {
 
 # Set up environment variables
 setup_env() {
-	case "${SERVER_TYPE^^}" in
+	case "${SERVER_TYPE}" in
 	PRESSABLE)
 		SSH_HOST="ssh.pressable.com"
 		SERVER_BASE_PATH="~/htdocs"
