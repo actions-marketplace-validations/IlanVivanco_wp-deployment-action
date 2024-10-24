@@ -1,6 +1,6 @@
 # WordPress Deployment Action
 
-This GitHub Action allows you to easily deploy code directly from GitHub to a WordPress environment hosted on Pressable or WP Engine using an SSH private key and the rsync command.
+This GitHub Action allows you to easily deploy code directly from GitHub to a WordPress environment hosted on Pressable or WP Engine by using an SSH private key and the rsync command.
 
 By default, the action deploys the repository's root directory. However, you can optionally deploy a specific directory, such as a theme or plugin, using the `SRC_PATH` option. Similarly, if you need to deploy to a different destination directory, you can specify it using the `REMOTE_PATH` option.
 
