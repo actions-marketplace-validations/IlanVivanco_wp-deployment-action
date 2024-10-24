@@ -1,5 +1,5 @@
 name: "WordPress Deployment Action"
-description: "It allows you to easily deploy code directly from GitHub to a WordPress environment hosted on Pressable or WP Engine by using an SSH private key and the rsync command."
+description: "Easily deploy code from GitHub to WordPress on Pressable or WP Engine using an SSH private key and the rsync command."
 branding:
   icon: "upload-cloud"
   color: "red"
