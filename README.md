@@ -122,17 +122,17 @@ You can read the full details [here](https://linux.die.net/man/1/rsync), but the
 
 | **Flag**              | **Description**                                                                                      |
 | --------------------- | ---------------------------------------------------------------------------------------------------- |
-| `-a` archive          | Enables archive mode, preserving symbolic links, permissions, timestamps, and other file attributes. |
-| `-z` compress         | Compresses file data during transfer to speed up the process over slower network connections.        |
-| `-v` verbose          | Enables verbose output for detailed information during execution.                                    |
-| `-r` recursive        | Recursively copies directories and their contents.                                                   |
-| `-i` itemized         | Provides a detailed list of changes made during synchronization.                                     |
+| `-a` *archive*        | Enables archive mode, preserving symbolic links, permissions, timestamps, and other file attributes. |
+| `-z` *compress*       | Compresses file data during transfer to speed up the process over slower network connections.        |
+| `-v` *verbose*        | Enables verbose output for detailed information during execution.                                    |
+| `-r` *recursive*      | Recursively copies directories and their contents.                                                   |
+| `-i` *itemized*       | Provides a detailed list of changes made during synchronization.                                     |
 | `--inplace`           | Updates files in place, writing directly to destination files without creating temporary copies.     |
 | `--delete`            | Deletes files from the destination that no longer exist in the source.                               |
 | `--delete-excluded`   | Deletes files from the destination that are excluded by an exclusion pattern.                        |
 | `--exclude`           | Excludes specific files or directories from the sync, e.g., `--exclude='*.log'`.                     |
 | `--exclude-from`      | Specifies a file (like `.deployignore`) containing a list of patterns to exclude.                    |
-| `-h` (human-readable) | Displays file sizes and transfer statistics in human-readable formats (e.g., KB, MB, GB).            |
+| `-h` *human-readable* | Displays file sizes and transfer statistics in human-readable formats (e.g., KB, MB, GB).            |
 
 ## Contributing
 
