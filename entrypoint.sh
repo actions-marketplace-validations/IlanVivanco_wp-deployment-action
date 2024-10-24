@@ -42,15 +42,15 @@ init() {
 
 # Print deployment info
 print_info() {
-	echo "--- Deployment info ---"
-	echo "Deploying to: ${SERVER_TYPE}"
-	echo "Server ID: ${SERVER_ID}"
-	echo "Source path: ${SRC_PATH}"
-	echo "Destination path: ${SERVER_DEST}"
-	echo "Flags: ${FLAGS_ARRAY[@]}"
-	echo "PHP linting: ${PHP_LINT}"
-	echo "Cache clear: ${CACHE_CLEAR}"
-	echo "Post-deploy script: ${SCRIPT}"
+	echo "--- DEPLOYMENT INFO ---"
+	echo "* Deploying to: ${SERVER_TYPE}"
+	echo "* Server ID: ${SERVER_ID}"
+	echo "* Source path: ${SRC_PATH}"
+	echo "* Destination path: ${SERVER_DEST}"
+	echo "* Flags: ${FLAGS_ARRAY[@]}"
+	echo "* PHP linting: ${PHP_LINT}"
+	echo "* Cache clear: ${CACHE_CLEAR}"
+	echo "* Post-deploy script: ${SCRIPT}"
 	echo "-----------------------"
 }
 

@@ -27,7 +27,7 @@ You can enable cache purging with the `CACHE_CLEAR` flag and perform PHP syntax 
             - 'feature/**'
       workflow_dispatch:
    env:
-      SERVER_NAME: pressable # pressable or wpengine
+      SERVER_TYPE: pressable # pressable or wpengine
       SERVER_ID: pressable-username # Pressable SFTP username or WP Engine environment name
       PROJECT_TYPE: theme # plugin or theme
       PROJECT_NAME: theme-name # Name of the plugin or theme
@@ -44,7 +44,7 @@ You can enable cache purging with the `CACHE_CLEAR` flag and perform PHP syntax 
            with:
                SSH_PRIVATE_KEY: ${{ secrets.MY_SSH_KEY }}
                SERVER_ID: ${{ env.SERVER_ID }}
-               SERVER_TYPE: ${{ env.SERVER_NAME }}
+               SERVER_TYPE: ${{ env.SERVER_TYPE }}
                REMOTE_PATH: 'wp-content/${{ env.PROJECT_TYPE }}s/${{ env.PROJECT_NAME }}'
                FLAGS: -azvrhi --inplace --delete --delete-excluded --exclude-from=.deployignore
                SCRIPT: 'bin/post-deploy.sh'
