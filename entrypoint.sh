@@ -9,19 +9,19 @@ validate() {
 	REMOTE_PATH="${REMOTE_PATH:-""}"
 	SRC_PATH="${SRC_PATH:-"."}"
 	FLAGS="${FLAGS:-"-azvrhi --inplace --exclude='.*'"}"
-	PHP_LINT="${PHP_LINT:-"FALSE"}"
-	CACHE_CLEAR="${CACHE_CLEAR:-"FALSE"}"
+	PHP_LINT="${PHP_LINT^^:-"FALSE"}"
+	CACHE_CLEAR="${CACHE_CLEAR^^:-"FALSE"}"
 	SCRIPT="${SCRIPT:-""}"
 }
 
 # Set up environment variables
 setup_env() {
-	case "${SERVER_TYPE}" in
-	pressable)
+	case "${SERVER_TYPE^^}" in
+	PRESSABLE)
 		SSH_HOST="ssh.pressable.com"
 		SERVER_BASE_PATH="~/htdocs"
 		;;
-	wpengine)
+	WPENGINE)
 		SSH_HOST="${SERVER_ID}.ssh.wpengine.net"
 		SERVER_BASE_PATH="sites/${SERVER_ID}"
 		;;
@@ -77,7 +77,7 @@ setup_ssh() {
 
 # Check PHP linting
 check_lint() {
-	if [ "${PHP_LINT^^}" == "TRUE" ]; then
+	if [ "${PHP_LINT}" == "TRUE" ]; then
 		echo "Starting PHP linting..."
 		find "${SRC_PATH}" -name "*.php" -type f -print0 | while IFS= read -r -d '' file; do
 			php -l "$file"
@@ -108,16 +108,8 @@ sync_files() {
 		"${SRC_PATH}/" "${SERVER_DEST}"
 	set +x
 
-	# Check if post-deploy script exists and set permissions
-	if [ -n "${SCRIPT}" ]; then
-		SCRIPT_PATH="${SERVER_BASE_PATH}/${REMOTE_PATH}/${SCRIPT}"
-
-		# Set permissions
-		ssh ${SSH_SETTINGS} "${SSH_USER}" "chmod +x ${SCRIPT_PATH}"
-
-		# Does file exist?
-		ssh ${SSH_SETTINGS} "${SSH_USER}" "if [ -f ${SCRIPT_PATH} ]; then echo 'Script file found'; else echo 'Script file not found'; fi"
-	fi
+	check_script
+	check_cache
 
 	# Execute post-deploy script
 	ssh ${SSH_SETTINGS} "${SSH_USER}" "${SCRIPT_COMMAND} ${CACHE_CLEAR}"
@@ -127,24 +119,35 @@ sync_files() {
 	echo "✅ Site has been deployed!"
 }
 
+# Check if post-deploy script exists and set permissions
 check_script() {
 	if [ -n "${SCRIPT}" ]; then
-		SCRIPT_COMMAND="bash ${SERVER_BASE_PATH}/${REMOTE_PATH}/${SCRIPT}"
+		SCRIPT_PATH="${SERVER_BASE_PATH}/${REMOTE_PATH}/${SCRIPT}"
+		SCRIPT_COMMAND="bash ${SCRIPT_PATH}"
+		echo "Script command: " ${SCRIPT_COMMAND}
+
+		# Set permissions
+		ssh ${SSH_SETTINGS} "${SSH_USER}" "chmod +x ${SCRIPT_PATH}"
+
+		# Does file exist?
+		ssh ${SSH_SETTINGS} "${SSH_USER}" "if [ -f ${SCRIPT_PATH} ]; then echo 'Script file found'; else echo 'Script file not found'; fi"
 	fi
 }
 
 # Check cache clearing command
 check_cache() {
-	if [ "${CACHE_CLEAR^^}" == "TRUE" ]; then
-		if [ "${SERVER_TYPE^^}" == "pressable" ]; then
-			CACHE_CLEAR="&& wp --skip-plugins --skip-themes cache flush"
-		elif [ "${SERVER_TYPE^^}" == "wpengine" ]; then
-			CACHE_CLEAR="&& wp --skip-plugins --skip-themes page-cache flush && wp --skip-plugins --skip-themes cdn-cache flush"
+	if [ "${CACHE_CLEAR}" == "TRUE" ]; then
+		if [ "${SERVER_TYPE^^}" == "PRESSABLE" ]; then
+			CACHE_COMMAND="&& wp --skip-plugins --skip-themes cache flush"
+		elif [ "${SERVER_TYPE^^}" == "WPENGINE" ]; then
+			CACHE_COMMAND="&& wp --skip-plugins --skip-themes page-cache flush && wp --skip-plugins --skip-themes cdn-cache flush"
 		else
-			CACHE_CLEAR=""
+			CACHE_COMMAND=""
 		fi
-	elif [ "${CACHE_CLEAR^^}" == "FALSE" ]; then
-		CACHE_CLEAR=""
+
+		echo "Cache command: " ${CACHE_COMMAND}
+	elif [ "${CACHE_CLEAR}" == "FALSE" ]; then
+		CACHE_COMMAND=""
 	fi
 }
 
@@ -153,6 +156,4 @@ validate
 setup_env
 setup_ssh
 check_lint
-check_script
-check_cache
 sync_files
