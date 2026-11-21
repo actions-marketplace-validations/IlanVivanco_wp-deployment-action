@@ -1,0 +1,57 @@
+name: Test
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: shellcheck entrypoint.sh test/e2e.sh test/compat.sh test/sshd/entrypoint.sh
+
+  e2e:
+    name: End-to-end
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: test/e2e.sh
+
+  compat:
+    name: Compatibility with v2.0.0
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # Until v2.0.0 is released there is nothing to compare with
+      - run: |
+          if git rev-parse -q --verify refs/tags/v2.0.0 >/dev/null; then
+            test/compat.sh v2.0.0
+          else
+            echo "v2.0.0 is not released yet, skipping."
+          fi
+
+  action:
+    name: Action wiring
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Custom without SSH_HOST must fail
+        id: missing-host
+        continue-on-error: true
+        uses: ./
+        with:
+          SERVER_TYPE: custom
+          SSH_USER: deploy
+          SSH_PRIVATE_KEY: |
+            -----BEGIN OPENSSH PRIVATE KEY-----
+            not-a-real-key
+            -----END OPENSSH PRIVATE KEY-----
+          BASE_PATH: ~/www
+      - name: Check the step failed
+        if: steps.missing-host.outcome != 'failure'
+        run: exit 1
